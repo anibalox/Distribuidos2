@@ -16,7 +16,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-var equipo_disponible string
 var mu_archivo sync.Mutex
 var f *os.File
 var ipToNumber = map[string]string{
@@ -24,6 +23,44 @@ var ipToNumber = map[string]string{
 	"10.6.46.48": "2",
 	"10.6.46.49": "3",
 	"10.6.46.50": "4",
+}
+var EquiposDisponibles = make([]string, 0)
+
+/*
+func enqueue
+
+param: ColaEspera []string, element string
+
+return: []string
+
+Esta funcion agrega un elemento a una copia de una cola de espera y devuelve la nueva cola con el elemento
+agregado
+*/
+
+func enqueue(ColaEspera []string, element string) []string {
+	ColaEspera = append(ColaEspera, element)
+	return ColaEspera
+}
+
+/*
+func dequeue
+
+param: ColaEspera []string
+
+return: string, []string
+
+Esta funcion elimina el primer elemento de una copia decola y devuelve el elemento
+junto con la nueva cola cambiada
+*/
+
+func dequeue(ColaEspera []string) (string, []string) {
+	element := ColaEspera[0]
+	if len(ColaEspera) == 1 {
+		var tmp = []string{}
+		return element, tmp
+
+	}
+	return element, ColaEspera[1:]
 }
 
 func ComunicarseConLaboratorio(client pb.LaboratorioClient, nro_lab string, nro_escuadron string) {
@@ -63,6 +100,8 @@ func ComunicarseConLaboratorio(client pb.LaboratorioClient, nro_lab string, nro_
 func main() {
 	qName := "Emergencias"                                      //Nombre de la cola                                           //Host de RabbitMQ 172.17.0.1
 	connQ, err := amqp.Dial("amqp://test:test@localhost:5670/") //Conexion con RabbitMQ
+	EquiposDisponibles = append(EquiposDisponibles, "1")
+	EquiposDisponibles = append(EquiposDisponibles, "2")
 
 	if err != nil {
 		log.Fatal(err)
@@ -113,11 +152,12 @@ func main() {
 
 	for delivery := range chDelivery {
 
-		for equipo_disponible == "0" {
+		for len(EquiposDisponibles) == 0 {
 			time.Sleep(1 * time.Second)
 		}
 
 		go func(delivery amqp.Delivery) {
+			var equipo string
 
 			hostS := string(delivery.Body)
 			port := ":50051"
@@ -131,7 +171,10 @@ func main() {
 			defer connS.Close()
 
 			serviceCliente := pb.NewLaboratorioClient(connS)
-			ComunicarseConLaboratorio(serviceCliente, ipToNumber[string(delivery.Body)], equipo_disponible)
+
+			equipo, EquiposDisponibles = dequeue(EquiposDisponibles)
+			ComunicarseConLaboratorio(serviceCliente, ipToNumber[string(delivery.Body)], equipo)
+			EquiposDisponibles = enqueue(EquiposDisponibles, equipo)
 		}(delivery)
 
 	}
