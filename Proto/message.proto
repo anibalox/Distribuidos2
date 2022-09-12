@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package grpc;
 
-option go_package = "SD/LAB1/proto";
+option go_package = "github.com/anibalox/Distribuidos2";
 
 message MessageInter {
     string body = 1;

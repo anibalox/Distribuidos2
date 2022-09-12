@@ -4,7 +4,7 @@
 // - protoc             v3.12.4
 // source: message.proto
 
-package proto
+package Distribuidos2
 
 import (
 	context "context"

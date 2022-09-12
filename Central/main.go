@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	pb "github.com/Kendovvul/Ejemplo/Proto"
+	pb "github.com/anibalox/Distribuidos2"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/grpc"
 )
