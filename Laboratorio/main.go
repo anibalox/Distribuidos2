@@ -78,7 +78,6 @@ func (s *server) Intercambio(stream pb.Laboratorio_IntercambioServer) error {
 	fmt.Println("Revisando Estado Escuadron: [" + resolucion + "]")
 	stream.Send(&pb.MessageInter{Body: resolucion})
 	fmt.Println("Estallido contenido. Escuadron " + nro_escuadron + " Retornando")
-
 	resuelto = true
 	return nil
 }
@@ -94,9 +93,9 @@ func (s *server) Finalizar(ctx context.Context, msg *pb.MessageFin) (*pb.Message
 func main() {
 	var estallido string
 
-	ipLab := myIP()        //nombre del laboratorio. Hay que cambiarlo
-	qName := "Emergencias" //nombre de la cola
-	ipCentral = centralIPValue()
+	ipLab := "localhost"    //myIP()         //nombre del laboratorio. Hay que cambiarlo
+	qName := "Emergencias"  //nombre de la cola
+	ipCentral = "localhost" //centralIPValue() HAY QUE CAMBIAR. SOLO PARA TESTING "localhost"
 	connQ, err := amqp.Dial("amqp://test:test@" + ipCentral + ":5670/")
 
 	if err != nil {
