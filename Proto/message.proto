@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package grpc;
+
+option go_package = "SD/LAB1/proto";
+
+message MessageInter {
+    string body = 1;
+}
+
+message MessageFin{
+    string body = 1;
+}
+
+service Laboratorio{
+    rpc Intercambio (stream MessageInter) returns (stream MessageInter);
+    rpc Finalizar (MessageFin) returns (MessageFin);
+}
