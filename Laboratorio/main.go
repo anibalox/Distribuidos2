@@ -93,9 +93,9 @@ func (s *server) Finalizar(ctx context.Context, msg *pb.MessageFin) (*pb.Message
 func main() {
 	var estallido string
 
-	ipLab := "localhost"    //myIP()         //nombre del laboratorio. Hay que cambiarlo
-	qName := "Emergencias"  //nombre de la cola
-	ipCentral = "localhost" //centralIPValue() HAY QUE CAMBIAR. SOLO PARA TESTING "localhost"
+	ipLab := myIP()              //"localhost"          //nombre del laboratorio. Hay que cambiarlo
+	qName := "Emergencias"       //nombre de la cola
+	ipCentral = centralIPValue() //"localhost" //centralIPValue() HAY QUE CAMBIAR. SOLO PARA TESTING "localhost"
 	connQ, err := amqp.Dial("amqp://test:test@" + ipCentral + ":5670/")
 
 	if err != nil {

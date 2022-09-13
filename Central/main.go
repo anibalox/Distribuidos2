@@ -23,7 +23,7 @@ var ipToNumber = map[string]string{
 	"10.6.46.48": "2",
 	"10.6.46.49": "3",
 	"10.6.46.50": "4",
-	"localhost" : "10",
+	"localhost":  "10",
 }
 var EquiposDisponibles = make([]string, 0)
 
@@ -134,35 +134,36 @@ func main() {
 	go func() {
 		<-c
 		fmt.Println("Enviando senales de termino")
-		/*
-			for k := range ipToNumber {
-				hostS := k
-				port := ":50051"
-				connS, err := grpc.Dial(hostS+port, grpc.WithInsecure())
 
-				if err != nil {
-					panic("No se pudo conectar con el servidor" + err.Error())
-				}
+		for k := range ipToNumber {
+			hostS := k
+			port := ":50051"
+			connS, err := grpc.Dial(hostS+port, grpc.WithInsecure())
 
-				serviceCliente := pb.NewLaboratorioClient(connS)
-				serviceCliente.Finalizar(context.Background(), &pb.MessageFin{Body: "1"})
-				fmt.Println("Se finalizo laboratorio " + ipToNumber[k])
-				connS.Close()
+			if err != nil {
+				panic("No se pudo conectar con el servidor" + err.Error())
 			}
-		*/
-		hostS := "localhost"
-		port := ":50051"
-		connS, err := grpc.Dial(hostS+port, grpc.WithInsecure())
 
-		if err != nil {
-			panic("No se pudo conectar con el servidor" + err.Error())
+			serviceCliente := pb.NewLaboratorioClient(connS)
+			serviceCliente.Finalizar(context.Background(), &pb.MessageFin{Body: "1"})
+			fmt.Println("Se finalizo laboratorio " + ipToNumber[k])
+			connS.Close()
 		}
 
-		serviceCliente := pb.NewLaboratorioClient(connS)
-		serviceCliente.Finalizar(context.Background(), &pb.MessageFin{Body: "1"})
-		fmt.Println("Se finalizo laboratorio conectado")
-		connS.Close()
+		/*
+			hostS := "localhost"
+			port := ":50051"
+			connS, err := grpc.Dial(hostS+port, grpc.WithInsecure())
 
+			if err != nil {
+				panic("No se pudo conectar con el servidor" + err.Error())
+			}
+
+			serviceCliente := pb.NewLaboratorioClient(connS)
+			serviceCliente.Finalizar(context.Background(), &pb.MessageFin{Body: "1"})
+			fmt.Println("Se finalizo laboratorio conectado")
+			connS.Close()
+		*/
 		os.Exit(1)
 	}()
 
@@ -196,4 +197,3 @@ func main() {
 	}
 
 }
-
