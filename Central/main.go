@@ -23,7 +23,6 @@ var ipToNumber = map[string]string{
 	"10.6.46.48": "2",
 	"10.6.46.49": "3",
 	"10.6.46.50": "4",
-	"localhost":  "10",
 }
 var EquiposDisponibles = make([]string, 0)
 
