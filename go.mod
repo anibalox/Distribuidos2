@@ -1,4 +1,4 @@
-module github.com/Kendovvul/Ejemplo
+module github.com/anibalox/Distribuidos2
 
 go 1.18
 
