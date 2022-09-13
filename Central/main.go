@@ -75,7 +75,7 @@ func ComunicarseConLaboratorio(client pb.LaboratorioClient, nro_lab string, nro_
 	stream.Send(&pb.MessageInter{Body: nro_escuadron})
 
 	//Realizando battalla. Esperar respuesta de situacion de lab
-	cantidadMensajes = 0
+	cantidadMensajes = 1
 
 	for situacion, _ = stream.Recv(); situacion.Body == "NO LISTO"; situacion, _ = stream.Recv() {
 		fmt.Println("Estatus Escuadra " + nro_escuadron + " : [" + situacion.Body + "]")
@@ -148,32 +148,17 @@ func main() {
 			fmt.Println("Se finalizo laboratorio " + ipToNumber[k])
 			connS.Close()
 		}
-
-		/*
-			hostS := "localhost"
-			port := ":50051"
-			connS, err := grpc.Dial(hostS+port, grpc.WithInsecure())
-
-			if err != nil {
-				panic("No se pudo conectar con el servidor" + err.Error())
-			}
-
-			serviceCliente := pb.NewLaboratorioClient(connS)
-			serviceCliente.Finalizar(context.Background(), &pb.MessageFin{Body: "1"})
-			fmt.Println("Se finalizo laboratorio conectado")
-			connS.Close()
-		*/
 		os.Exit(1)
 	}()
 
 	for delivery := range chDelivery {
-
+		var equipo string
 		for len(EquiposDisponibles) == 0 {
 			time.Sleep(1 * time.Second)
 		}
+		equipo, EquiposDisponibles = dequeue(EquiposDisponibles)
 
-		go func(delivery amqp.Delivery) {
-			var equipo string
+		go func(delivery amqp.Delivery, equipo string) {
 
 			hostS := string(delivery.Body)
 			port := ":50051"
@@ -188,10 +173,9 @@ func main() {
 
 			serviceCliente := pb.NewLaboratorioClient(connS)
 
-			equipo, EquiposDisponibles = dequeue(EquiposDisponibles)
 			ComunicarseConLaboratorio(serviceCliente, ipToNumber[string(delivery.Body)], equipo)
 			EquiposDisponibles = enqueue(EquiposDisponibles, equipo)
-		}(delivery)
+		}(delivery, equipo)
 
 	}
 
