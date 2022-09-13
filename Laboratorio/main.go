@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	pb "github.com/anibalox/Distribuidos2"
+	pb "github.com/anibalox/Distribuidos2/Proto"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"google.golang.org/grpc"
 )
